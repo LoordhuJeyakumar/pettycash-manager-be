@@ -1,0 +1,29 @@
+{
+  "name": "pettycash-manager-be",
+  "version": "1.0.0",
+  "description": "Pettycash manager backend using nodejs, express and mongodb",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js",
+    "dev": "nodemon index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/LoordhuJeyakumar/pettycash-manager-be.git"
+  },
+  "author": "Loordhu Jeyakumar",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/LoordhuJeyakumar/pettycash-manager-be/issues"
+  },
+  "homepage": "https://github.com/LoordhuJeyakumar/pettycash-manager-be#readme",
+  "devDependencies": {
+    "nodemon": "^3.0.3"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.1",
+    "express": "^4.18.2",
+    "mongoose": "^8.1.1"
+  }
+}
