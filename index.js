@@ -8,9 +8,8 @@ const app = require("./app");
 console.log("Connecting to database.....");
 
 //connect to mongodb
-
 mongoose
-  .connect(config.MONGODB_URI)
+  .connect(`${config.MONGODB_URI}${config.DB_NAME}`)
   .then(() => {
     console.log("Connected to the MongoDB...");
 
@@ -20,5 +19,5 @@ mongoose
     });
   })
   .catch((error) => {
-    console.log("Error connecting to the MongoDB", error);
+    console.log("Error connecting to the MongoDB", error.message);
   });
