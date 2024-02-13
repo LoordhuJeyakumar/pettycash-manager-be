@@ -19,14 +19,19 @@ const userSchema = new mongoose.Schema({
     state: { type: String, default: null },
     pincode: { type: String, default: null },
   },
+  role: {
+    type: String,
+    enum: ["manager", "user"],
+    default: "user",
+  },
   dob: { type: String, default: null },
   doj: { type: String, default: null },
-  isManager: { type: Boolean, default: false },
   passwordHash: { type: String, required: [true, "Password is required"] },
   resetToken: { type: String, default: "" },
   verificationToken: { type: String, default: "" },
   varification: { type: Boolean, default: false },
   createdAT: { type: Date, default: Date.now() },
+  updatedAt: { type: Date, default: Date.now() },
 });
 
 const UserModel = mongoose.model("User", userSchema, "users");

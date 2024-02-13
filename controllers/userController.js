@@ -7,14 +7,9 @@ const config = require("../utils/config");
 const userController = {
   signup: async (request, response) => {
     try {
-      const { name, email, phone, password, isManager } = request.body;
+      const { name, email, phone, password, role } = request.body;
       let user = await UserModel.findOne({ email: email });
 
-      /*  if (!name && !email && !phone && !password) {
-       return response
-          .status(400)
-          .json({ message: "Missing name or email or phone or password" });
-      } */
 
       if (user) {
         return response.status(409).send({
@@ -29,6 +24,7 @@ const userController = {
           name,
           email,
           phone,
+          role
         },
         config.JWT_SECRET
       );
@@ -39,7 +35,7 @@ const userController = {
         phone,
         passwordHash,
         verificationToken,
-        isManager,
+        role,
       });
 
       let savedUser = await newUser.save();
@@ -112,7 +108,7 @@ const userController = {
   login: async (request, response) => {
     const { email, password } = request.body;
 
-    const user =await UserModel.findOne({ email: email });
+    const user = await UserModel.findOne({ email: email });
 
     try {
       if (!email && !password) {
@@ -120,7 +116,7 @@ const userController = {
           .status(400)
           .json({ message: "Missing username and password" });
       }
-      
+
       if (!user) {
         return response
           .status(401)
@@ -158,6 +154,22 @@ const userController = {
         email: user.email,
         accessToken,
       });
+    } catch (error) {
+      return response.status(500).send({ error: error.message });
+    }
+  },
+
+  getAllManagers: async (request, response) => {
+    try {
+      const managers = await UserModel.find({ isManager: true });
+
+      if (!managers) {
+        return response.status(404).send({ message: "Mangers not found" });
+      }
+
+      return response
+        .status(200)
+        .send({ message: "Managers details", managers });
     } catch (error) {
       return response.status(500).send({ error: error.message });
     }

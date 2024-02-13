@@ -1,3 +1,4 @@
+const balanceRouter = require("./balanceRouter");
 const userRouter = require("./userRouter");
 
 //import router
@@ -11,5 +12,6 @@ appRouter.get("/", (req, res) =>
 );
 
 appRouter.use("/user", userRouter);
+appRouter.use("/entry", balanceRouter);
 
 module.exports = appRouter;

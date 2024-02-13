@@ -4,7 +4,7 @@ const emailMessage = require("./message");
 
 async function sendVerificationEmail(user) {
   try {
-    let URL = `${config.FRONTEND_BASEURI}verify/${user.varificationToken}`;
+    let URL = `${config.FRONTEND_BASEURI}verify/${user.verificationToken}`;
     const transporter = nodemailer.createTransport({
       host: config.EMAIL_HOST,
       port: config.EMAIL_PORT,

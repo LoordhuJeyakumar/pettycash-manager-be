@@ -1,7 +1,7 @@
 const UserModel = require("../models/userModel");
 const jwt = require("jsonwebtoken");
 
-const verifyToken = async (request, response) => {
+const userVerifyToken = async (request, response) => {
   const { verificationToken } = request.body;
   if (!verificationToken) {
     response.status(400).json("Missing reset token");
@@ -41,4 +41,4 @@ const verifyToken = async (request, response) => {
   }
 };
 
-module.exports = verifyToken;
+module.exports = userVerifyToken;
