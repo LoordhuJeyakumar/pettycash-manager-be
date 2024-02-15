@@ -1,4 +1,6 @@
+const accountRouter = require("./accountRouter");
 const balanceRouter = require("./balanceRouter");
+const transactionRouter = require("./transactionRouter");
 const userRouter = require("./userRouter");
 
 //import router
@@ -12,6 +14,9 @@ appRouter.get("/", (req, res) =>
 );
 
 appRouter.use("/user", userRouter);
-appRouter.use("/entry", balanceRouter);
+appRouter.use("/account", accountRouter);
+appRouter.use("/transaction", transactionRouter);
+
+/* appRouter.use("/entry", balanceRouter); */
 
 module.exports = appRouter;

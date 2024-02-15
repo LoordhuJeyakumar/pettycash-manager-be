@@ -12,7 +12,7 @@ const getTokenFrom = async (req) => {
 };
 
 const authMiddleware = {
-  verifyToken: async (req, res, next) => {
+  verifyAccessToken: async (req, res, next) => {
     const token = req.headers.authorization;
 
     if (!token) {

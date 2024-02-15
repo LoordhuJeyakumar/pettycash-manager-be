@@ -1,27 +1,34 @@
 const mongoose = require("mongoose");
 
-const accountModel = new mongoose.Schema(
+const accountModelSchema = new mongoose.Schema(
   {
-    acc_Name: { type: String, required: [true, "Account Name is required"] },
-    companyName: { type: String },
-    opening_Balance: {
-      type: Number,
-      min: 0,
-      required: [true, "Opening balance is required"],
+    acc_Name: {
+      type: String,
+      required: [true, "Account Name is required"],
+      unique: true,
     },
-    createdAT: { type: Date, default: Date.now() },
+    companyName: { type: String, default: "" },
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,
       ref: "User",
       unique: true,
     },
+    opening_Balance: {
+      type: Number,
+      min: 0,
+      required: [true, "Opening balance is required"],
+    },
+
     clossingBalance: {
       type: Number,
       min: 0,
       required: [true, "Closing balance is required"],
+      default: 0,
     },
-    cashRequests: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
+    cashRequests: [
+      { type: mongoose.Schema.Types.ObjectId, ref: "Cash_Request" },
+    ],
     transactions: [
       {
         type: mongoose.Schema.Types.ObjectId,
@@ -31,3 +38,16 @@ const accountModel = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
+accountModelSchema.pre("save", async function (next) {
+  if (this.opening_Balance < 0) {
+    throw new Error("Opening balance must be non-negative");
+  }
+
+  this.clossingBalance = this.opening_Balance;
+  next();
+});
+
+const AccountModel = mongoose.model("Account", accountModelSchema, "accounts");
+
+module.exports = AccountModel;
