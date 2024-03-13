@@ -1,5 +1,5 @@
 const accountRouter = require("./accountRouter");
-const balanceRouter = require("./balanceRouter");
+const cashRequestRouter = require("./cashRequestRouter");
 const transactionRouter = require("./transactionRouter");
 const userRouter = require("./userRouter");
 
@@ -16,6 +16,7 @@ appRouter.get("/", (req, res) =>
 appRouter.use("/user", userRouter);
 appRouter.use("/account", accountRouter);
 appRouter.use("/transaction", transactionRouter);
+appRouter.use("/cashRequest", cashRequestRouter);
 
 /* appRouter.use("/entry", balanceRouter); */
 

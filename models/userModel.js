@@ -12,7 +12,7 @@ const userSchema = new mongoose.Schema({
     required: [true, "Email is required"],
     validate: validateEmail,
   },
-  phone: { type: String, required: [true, "phone number is required"] },
+  phone: { type: String, default: null },
   addressDetails: {
     address: { type: String, default: null },
     city: { type: String, default: null },
@@ -25,7 +25,7 @@ const userSchema = new mongoose.Schema({
     default: "user",
   },
   dob: { type: String, default: null },
-  doj: { type: String, default: null },
+  doj: { type: String, default: Date.now() },
   passwordHash: { type: String, required: [true, "Password is required"] },
   resetToken: { type: String, default: "" },
   verificationToken: { type: String, default: "" },

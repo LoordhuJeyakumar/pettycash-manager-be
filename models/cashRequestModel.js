@@ -1,7 +1,12 @@
 const mongoose = require("mongoose");
+const AccountModel = require("./accountModel");
 
 const cash_RequestSchema = new mongoose.Schema({
-  accountId:{type:mongoose.Schema.Types.ObjectId, ref:"Account"},
+  accountId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Account",
+    required: true,
+  },
   requestedBy: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User", // Reference to the User model for cashier information
@@ -46,10 +51,41 @@ const cash_RequestSchema = new mongoose.Schema({
   },
 });
 
+async function cashRequestMiddleware() {
+  const cashRequestObj = await this.model.findOne(this.getQuery());
+  const account = await AccountModel.findById(cashRequestObj.accountId);
+
+  if (!account) {
+    throw new Error("Invalid petty cash account ID");
+  }
+
+  let newOpeningBalance;
+
+  if (this._update.status === "Approved") {
+    newOpeningBalance = account.clossingBalance + cashRequestObj.amount;
+  }
+
+  let obj = {
+    opening_Balance: newOpeningBalance,
+    cashRequests: account.cashRequests.concat(cashRequestObj._id),
+  };
+
+  account.opening_Balance = newOpeningBalance;
+  account.cashRequests = account.cashRequests.concat(cashRequestObj._id);
+  await account.save();
+
+  /* let savedAccount = await AccountModel.findOneAndUpdate(
+    { _id: cashRequestObj.accountId },
+    obj
+  ); */
+}
+
+cash_RequestSchema.pre(["findOneAndUpdate"], cashRequestMiddleware);
+
 const Cash_Request_Model = mongoose.model(
-  "Cash_Request",
+  "Cash_request",
   cash_RequestSchema,
-  cash_requests
+  "cash_requests"
 );
 
 module.exports = Cash_Request_Model;

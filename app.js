@@ -13,7 +13,7 @@ app.use(cors());
 //use the express.json middleware
 app.use(express.json());
 
-app.use("/", appRouter);
+app.use("/api/v1/", appRouter);
 
 const unknownEndpoint = (request, response) => {
   response.status(404).send({ error: "unknown endpoint" });

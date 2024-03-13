@@ -12,10 +12,35 @@ const transactionSchema = new mongoose.Schema(
       type: String,
       required: [true, "Transaction description is required"],
     },
+    entries: [
+      {
+        entry_Name: {
+          type: String,
+          required: [true, "Entry description is required"],
+        },
+        entry_Amount: {
+          type: Number,
+          required: [true, "Transaction amount is required"],
+          min: 0,
+        },
+        category: {
+          // Optional for detailed categorization
+          type: String,
+          default: "",
+        },
+        receiptImage: {
+          type: String,
+          default: "",
+        },
+      },
+    ],
     amount: {
       type: Number,
-      required: [true, "Transaction amount is required"],
-      min: 0,
+      /* required: [true, "Transaction amount is required"], */
+      validate: {
+        validator: (value) => value > 0,
+        message: "Amount must be a positive number",
+      },
     },
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,
@@ -26,16 +51,9 @@ const transactionSchema = new mongoose.Schema(
       required: [true, "type is requierd"],
       enum: ["expense", "income"],
     },
-    category: {
-      // Optional for detailed categorization
-      type: String,
-      default: "",
-    },
+
     // Additional fields for receipts, invoices, etc. (optional)
-    receiptImage: {
-      type: String,
-      default: "",
-    },
+
     department: {
       type: String,
       default: "",
@@ -44,8 +62,19 @@ const transactionSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+function checkIsValidEntries(entries) {
+  let isValid = entries.find((entry) => {
+    if (entry.entry_Name && entry.entry_Amount) {
+      return true;
+    } else {
+      return null;
+    }
+  });
+
+  return isValid;
+}
+
 async function transactionsMiddleware(next) {
-  
   let transaction = this;
   const account = await AccountModel.findById(transaction.pettyCashAccountId);
 
@@ -55,6 +84,18 @@ async function transactionsMiddleware(next) {
 
   if (!["expense", "income"].includes(transaction.type)) {
     throw new Error("Invalid transaction type");
+  }
+
+  let totalEntries = this.entries;
+
+  if (checkIsValidEntries(this.entries)) {
+    let sum = totalEntries.reduce(
+      (accumulator, currentValue) => accumulator + currentValue.entry_Amount,
+      0
+    );
+    this.amount = sum;
+  } else {
+    throw new Error("Invalid transaction entries");
   }
 
   let updatedBalance;

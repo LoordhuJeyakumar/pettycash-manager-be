@@ -12,7 +12,6 @@ const accountModelSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       required: true,
       ref: "User",
-      unique: true,
     },
     opening_Balance: {
       type: Number,
@@ -39,12 +38,13 @@ const accountModelSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-accountModelSchema.pre("save", async function (next) {
+accountModelSchema.pre(["findOneAndUpdate", "save"], async function (next) {
   if (this.opening_Balance < 0) {
     throw new Error("Opening balance must be non-negative");
   }
-
-  this.clossingBalance = this.opening_Balance;
+  if (this._update) {
+  }
+  this.clossingBalance = this.opening_Balance || this._update.opening_Balance;
   next();
 });
 
