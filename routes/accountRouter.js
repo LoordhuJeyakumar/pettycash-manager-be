@@ -21,4 +21,10 @@ accountRouter.put(
   accountController.editAccount
 );
 
+accountRouter.delete(
+  "/delete/:id",
+  authMiddleware.verifyAccessToken,
+  accountController.deleteAccount
+);
+
 module.exports = accountRouter

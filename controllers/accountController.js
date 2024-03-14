@@ -132,6 +132,27 @@ const accountController = {
     } catch (error) {
       return response.status(500).json({ error: error.message });
     }
+  },
+  deleteAccount : async (request,response)=>{
+    try {
+      const {id} = request.params
+      if(!id){
+        return response.status(400).json({ message: "Missing accountId" });
+      }
+      
+      const deletedAccount = await AccountModel.findByIdAndDelete(id)
+      if(!deletedAccount){
+        return response
+        .status(401)
+        .json({ message: "Account does not exist, Please check accountId!" });
+      }
+
+      return response
+      .status(200)
+      .json({ message: "Account deleted successfuly!", deletedAccount });
+    } catch (error) {
+      return response.status(500).json({ error: error.message });
+    }
   }
 };
 
