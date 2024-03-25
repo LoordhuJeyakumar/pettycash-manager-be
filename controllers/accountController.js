@@ -95,18 +95,31 @@ const accountController = {
           .json({ message: "user does not exist, Please check userId!" });
       }
 
-      if (user.role != "manager") {
+      /*  if (user.role != "manager") {
         return response
           .status(403)
           .json({ message: "Sorry! You are not authorized" });
-      }
+      } */
 
       const accounts = await AccountModel.find();
+      const accountsSummery = await AccountModel.aggregate([
+        {
+          $group: {
+            _id: null,
+            totalNoOfAccounts: { $sum: 1 },
+            totalClossingBalance: { $sum: "$clossingBalance" },
+          },
+        },
+      ]);
 
       if (accounts) {
         return response
           .status(200)
-          .json({ message: "Account details fetched", accounts });
+          .json({
+            message: "Account details fetched",
+            accounts,
+            accountsSummery,
+          });
       }
     } catch (error) {
       return response.status(500).json({ error: error.message });

@@ -28,12 +28,9 @@ const transactionSchema = new mongoose.Schema(
           type: String,
           default: "",
         },
-        receiptImage: {
-          type: String,
-          default: "",
-        },
       },
     ],
+    entriesCount: { type: Number, default: 0 },
     amount: {
       type: Number,
       /* required: [true, "Transaction amount is required"], */
@@ -53,7 +50,13 @@ const transactionSchema = new mongoose.Schema(
     },
 
     // Additional fields for receipts, invoices, etc. (optional)
-
+    receipts: [
+      {
+        mimetype: { type: String, default: null },
+        data: { type: Buffer, default: null },
+      },
+    ],
+    receiptsCount: { type: Number, default: 0 },
     department: {
       type: String,
       default: "",
@@ -110,7 +113,8 @@ async function transactionsMiddleware(next) {
       "Insufficient funds to make an transaction, Please request fund from your manager"
     );
   }
-
+  this.entriesCount = this.entries.length;
+  this.receiptsCount = this.receipts.length;
   await AccountModel.findByIdAndUpdate(transaction.pettyCashAccountId, {
     clossingBalance: updatedBalance,
     transactions: account.transactions.concat(transaction._id),

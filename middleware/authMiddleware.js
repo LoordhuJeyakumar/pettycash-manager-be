@@ -23,14 +23,14 @@ const authMiddleware = {
     try {
       jwt.verify(getToken, config.JWT_SECRET, (error, decodedToken) => {
         if (error) {
-          return res.json({ error: "Token is invalid" });
+          return res.status(401).json({ error: "Token is invalid" });
         }
 
         req.userId = decodedToken.id;
         next();
       });
     } catch (error) {
-      return res.json({ error: "Token is invalid" });
+      return res.status(500).json({ error: "Token is invalid" });
     }
   },
 };

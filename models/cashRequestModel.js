@@ -7,8 +7,20 @@ const cash_RequestSchema = new mongoose.Schema({
     ref: "Account",
     required: true,
   },
+  accountName: {
+    type: String,
+    ref: "Account",
+  },
   requestedBy: {
     type: mongoose.Schema.Types.ObjectId,
+    ref: "User", // Reference to the User model for cashier information
+  },
+  requestedUserName: {
+    type: String,
+    ref: "User", // Reference to the User model for cashier information
+  },
+  approvedUserName: {
+    type: String,
     ref: "User", // Reference to the User model for cashier information
   },
   purpose: {
@@ -33,10 +45,13 @@ const cash_RequestSchema = new mongoose.Schema({
     enum: ["Pending", "Approved", "Rejected"],
     default: "Pending",
   },
-  documents: {
-    type: [String], // Array of document URLs or references
-    default: [],
-  },
+  documents: [
+    {
+      mimetype: { type: String, default: null },
+      data: { type: Buffer, default: null },
+    },
+  ],
+  documentsCount: { type: Number, default: 0 },
   approvedBy: {
     type: mongoose.Schema.Types.ObjectId, // Reference to the User model who approved
     default: null,
@@ -81,11 +96,17 @@ async function cashRequestMiddleware() {
 }
 
 cash_RequestSchema.pre(["findOneAndUpdate"], cashRequestMiddleware);
+cash_RequestSchema.pre("save", function (next) {
+  this.documentsCount = this.documents.length;
+  next();
+});
 
 const Cash_Request_Model = mongoose.model(
   "Cash_request",
   cash_RequestSchema,
   "cash_requests"
 );
+
+
 
 module.exports = Cash_Request_Model;
