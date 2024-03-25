@@ -7,12 +7,18 @@ const config = require("../utils/config");
 const userController = {
   signup: async (request, response) => {
     try {
-      const { name, email, phone, password, role } = request.body;
-      let user = await UserModel.findOne({ email: email });
+      const {
+        name,
+        emailLower = email.toLowerCase(),
+        phone,
+        password,
+        role,
+      } = request.body;
+      let user = await UserModel.findOne({ email: emailLower });
 
       if (user) {
         return response.status(409).json({
-          message: `User with '${email}' already exists`,
+          message: `User with '${emailLower}' already exists`,
         });
       }
 
@@ -21,7 +27,7 @@ const userController = {
       const verificationToken = jwt.sign(
         {
           name,
-          email,
+          email: emailLower,
           phone,
           role,
         },
@@ -31,7 +37,7 @@ const userController = {
 
       let newUser = new UserModel({
         name,
-        email,
+        email: emailLower,
         phone,
         passwordHash,
         verificationToken,
@@ -110,12 +116,12 @@ const userController = {
   },
 
   login: async (request, response) => {
-    const { email, password } = request.body;
+    const { emailLower = email.toLowerCase(), password } = request.body;
 
-    const user = await UserModel.findOne({ email: email });
+    const user = await UserModel.findOne({ email: emailLower });
 
     try {
-      if (!email && !password) {
+      if (!emailLower && !password) {
         return response
           .status(400)
           .json({ message: "Missing username and password" });
@@ -166,14 +172,14 @@ const userController = {
   },
 
   getVerificationToken: async (request, response) => {
-    const { email } = request.body;
+    const { emailLower = email.toLowerCase() } = request.body;
 
     try {
-      if (!email) {
+      if (!emailLower) {
         return response.status(400).json({ message: "Missing email" });
       }
 
-      const user = await UserModel.findOne({ email: email });
+      const user = await UserModel.findOne({ email: emailLower });
 
       if (!user) {
         return response
