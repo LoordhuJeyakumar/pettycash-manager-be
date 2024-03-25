@@ -6,16 +6,13 @@ const config = require("../utils/config");
 
 const userController = {
   signup: async (request, response) => {
-    try {
-      const {
-        name,
-        email = request.body.email?.toLowerCase(),
-        phone,
-        password,
-        role,
-      } = request.body;
-      let user = await UserModel.findOne({ email: email });
 
+    try {
+      const { name, phone, password, role } = request.body;
+
+      const email = request.body.email?.toLowerCase();
+      let user = await UserModel.findOne({ email: email });
+      console.log(email);
       if (user) {
         return response.status(409).json({
           message: `User with '${email}' already exists`,
@@ -116,8 +113,8 @@ const userController = {
   },
 
   login: async (request, response) => {
-    const { email = request.body.email?.toLowerCase(), password } = request.body;
-
+    const { password } = request.body;
+    const email = request.body.email?.toLowerCase();
     const user = await UserModel.findOne({ email: email });
 
     try {
@@ -172,8 +169,8 @@ const userController = {
   },
 
   getVerificationToken: async (request, response) => {
-    const { email = request.body.email?.toLowerCase() } = request.body;
-
+   
+    const email = request.body.email?.toLowerCase();
     try {
       if (!email) {
         return response.status(400).json({ message: "Missing email" });
