@@ -25,7 +25,7 @@ const userSchema = new mongoose.Schema({
     default: "user",
   },
   dob: { type: String, default: null },
-  doj: { type: String, default: Date.now() },
+  doj: { type: Date, default: Date.now() },
   passwordHash: { type: String, required: [true, "Password is required"] },
   resetToken: { type: String, default: "" },
   verificationToken: { type: String, default: "" },
