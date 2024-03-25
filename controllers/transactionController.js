@@ -1,9 +1,5 @@
 const AccountModel = require("../models/accountModel");
 const TransactionModel = require("../models/transactionModel");
-const multer = require("multer");
-// configure multer
-const storage = multer.memoryStorage();
-const upload = multer({ storage });
 
 const transactionController = {
   create: async (request, response) => {

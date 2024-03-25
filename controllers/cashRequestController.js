@@ -1,13 +1,6 @@
-const multer = require("multer");
 const AccountModel = require("../models/accountModel");
 const Cash_Request_Model = require("../models/cashRequestModel");
 const UserModel = require("../models/userModel");
-const { default: mongoose } = require("mongoose");
-const JSZip = require("jszip");
-// configure multer
-const storage = multer.memoryStorage();
-const upload = multer({ storage });
-const fs = require("fs");
 const archiver = require("archiver");
 
 const cashRequestController = {
