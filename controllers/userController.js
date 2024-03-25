@@ -12,7 +12,6 @@ const userController = {
 
       const email = request.body.email?.toLowerCase();
       let user = await UserModel.findOne({ email: email });
-      console.log(email);
       if (user) {
         return response.status(409).json({
           message: `User with '${email}' already exists`,
